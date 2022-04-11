@@ -1,10 +1,13 @@
 # INTRODUCTION REACT
 Bu repo React JS için farklı kullanım senaryolarını içermektedir.
-Toplam 4 senaryo 4 branch olarak aktarılmıştır.
+Toplam 5 senaryo 5 branch olarak aktarılmıştır.
 1. React Hello World
 2. React Hello World JSX (Babel Entegrasyonlu)
 3. React Class Component (Todo App)
-4. React Function Component + Hooks (Todo App)
+4. React Class Component + Webpack (Todo App)
+5. React Function Component + Hooks (Todo App)
+
+`NOT:` 1,2 ve 3.kısımlarda React direkt olarak HTML sayfasına link olarak eklenmiştir. Yani herhangi bir modül kullanımı yapılmamıştır. Eğer modül (import/export) kullanımı yapmak istiyorsanız "webpack" gibi module bundler aracı kullanmanız gerekmektedir.
 
 ## React Class Component 
 * Kendi içerisinde state bilgisi tutabilir. State bilgisi tutan componentler için `stateful` component denilmektedir.
@@ -16,88 +19,85 @@ Toplam 4 senaryo 4 branch olarak aktarılmıştır.
 * Class Component tarafından sağlanan avantajları (state bilgisi tutma gibi) React Hookları kullanarak sağlayabiliyoruz. Yani class component kullanımına gerek kalmıyor.
 * Bir Function Component için state bilgisi tutabilme özelliğini kazandırmak için `useState` hook'u kullanılmaktadır.
 
-# React Hello World JSX
-Javascript XML olarak açabileceğimiz JSX, React uygulaması geliştirirken büyük kolaylık sağlamaktadır. HTML etiketlerini JS dosyalarında doğrudan kullanabileceğimiz bir yapı sağlamaktadır. Tabi ufak tefek farklılıkları bulunmaktadır.
+# Ortamın Kurulması
+Dosyaların indirilmesi
+`npm i`
 
-Örneğin;
-```html
-<div class="box">
-</div>
-```
-şeklinde bildirmiş olduğumuz bir HTML bileşeninde `class` özniteliği hataya sebep olacaktır. Çünkü JSX sözdiziminde `class` değil `className` kullanılmaktadır. Bu gibi ufak detayları console penceresindeki hatalardan bile görebilirsiniz. Tabii ufak bir google araştırması yapmanız da faydalı olacaktır.
+Babel Çıktısı Alma
+`npm run babel`
 
-Bu reponun amacı JSX nedir sorusuna cevap vermek ve `Babel` yapılandırmasını tamamlamaktır.
+İşlemleri daha komplike hale getirmemek için `gulp` veya `webpack` kullanmadım. Projeyi açmak için Visual Studio Code `Live Server` kurulabilir.
 
-Javascript tarafındaki ES6+ sürümlere ait özelliklerin ES5 formatına dönüştürülmesi ve React JSX söz diziminin dönüştürülmesi için `Babel` aracından faydalanacağız.
+`NOT:` Burada yapılanlar işin temelini ifade etmektedir. Yoksa `create-react-app` ile proje oluşturmak daha mantıklı bir yaklaşımdır.
 
-`NOT:` Eğer repoyu `clone` yaptıysanız aşağıdaki adımları tek tek yapmak zorunda değilsiniz. `npm i` komutunu çalıştırmanız yeterli olacaktır.
+# Class Component vs Function Component
 
-## Ortamın Kurulması
-![babel-presets](babel-presets.png)
-
-Yukarıda Babel tarafından sağlanan presetsler bulunmaktadır. Bunlardan bizim için gerekli olan `@babel/preset-env` ve `@babel/preset-react` paketleridir.
-
-```npm
-npm install --save-dev @babel/preset-env
-```
-```npm
-npm install --save-dev @babel/preset-react
-```
-
-Komutlarını ana dizinde çalıştırıyoruz. Geliştirme ortamında ihtiyacımız olan bu iki paketi yüklediğimize göre yine geliştirme ortamında ihtiyaç duyduğumuz Babel komutlarını yürütebileceğimiz `@babel/core` ve `@babel/cli` paketlerini yükleyebiliriz.
-
-```npm
-npm install --save-dev @babel/core
-```
-```npm
-npm install --save-dev @babel/cli
-```
-
-Yükleme işlemlerini tamamladığımıza göre `NPM Script` ile çalıştırılabilir hale getirebiliriz.
-
-Öncelikle `.babelrc` dosyasını oluşturmamız gerekmektedir. Burada `NPM Script` ile çalıştıracağımız komuta yapılandırma vermiş olacağız.
-
+Aşağıda bir `Class Component` ve `Function Component` kullanımı bulunmaktadır.
 ```js
-{
-    "presets":["@babel/preset-env","@babel/preset-react"]
+class TodoApp extends React.Component{
+    render(){
+        return(
+            <div>
+                <Header title="Todo Application" description="Lorem, ipsum dolor."/>
+            </div>
+        );
+    }
+}
+const Header=function(props){
+    return(
+        <div>
+            <h1>{props.title}</h1>
+            <div>{props.description}</div>
+        </div>
+    );
 }
 ```
-
-Şimdi `package.json` dosyasında script tanımını aşağıdaki gibi yapıyoruz.
-```js
-"scripts": {
-    "babel": "npx babel src/app.js --out-file=dist/app.js --watch"
-  },
-```
-Yukarıdaki script `src` klasöründe app.js dosyasını arar ve `dist` klasörü altına dönüşümlerden geçirdikten sonra çıkartır.
-
-Çalıştırmak için `npm run babel` demeniz yeterli olacaktır. Ayrıca --watch bayrağı sayesinde src/app.js içerisinde değişiklik olduğunda otomatik olarak tekrar çıktı verecektir. Tabii ilgili console penceresini kapatmadığınız sürece bu geçerlidir.
-
-HTML dosyasında da dahil ederken `dist` klasörünü bildirmeyi unutmayın.
-
-```html
-<script src="dist/app.js"></script>
-```
-
-Aşağıdaki kod bir önceki branch üzerinde tanımlı olan koddur.
+Yukarıdaki `Function Component` olarak tanımlanan `Header` componenti için `Class Component` tanımlaması aşağıdaki gibi yapılabilir.
 
 ```js
-
-var root=document.getElementById('root');
-var template=React.createElement(
-    'h1',
-    null,
-    'Hello World'
-);
-ReactDOM.render(template,root);
+class Header extends React.Component{
+    render(){
+        return(
+            <div>
+                <h1>{this.props.title}</h1>
+                <div>{this.props.description}</div>
+            </div>
+        );
+    }   
+}
 ```
+Görüldüğü üzere `Class Component` tanımlamasında `props` zaten içerisinde tanımlı olarak gelmektedir.
 
-Burada ufak bir dönüşüm yapıyoruz. Yani JSX kullanıyoruz.
+`NOT:` State bilgisi içermeyen sadece veri gösterimi için kullanılan bileşenler için stateless function component kullanmak daha mantıklı bir yaklaşımdır.
 
-```js
-var root=document.getElementById('root');
-var template=<h1>Hello World</h1>
-ReactDOM.render(template,root);
-```
+# React Lifecycle
+![ReactLifeCycle](react-lifecycle.png)
+Temelde bir bileşen için yaşam döngüsünde dört adım bulunmaktadır.
+1. Bileşenin Oluşturulması (Initialization)
+2. Bileşenin DOM'a bağlanması (Mounting)
+3. Bileşenin DOM üzerinde güncellenmesi (Updating)
+4. Bileşenin DOM üzerinden kaldırılması (Unmounting)
 
-Görüldüğü üzere oldukça basit bir görünüm kazandı.
+Yukarıdaki adımlar sonucunda tetiklenen bazı olaylar vardır.
+`NOT`: Constructor metodu en başta çalışır
+
+1. `ComponentWillMount`: Bileşenin Real DOM'a aktarılmadan (render) önce tetiklenir.
+2. `ComponentDidMount`: Bileşen Real DOM'a eklendikten (render) sonra çalışır.
+
+`Constructor > ComponentWillMount > Render > ComponentDidMount`
+
+`NOT:` Eğer bileşenin bir child bileşeni varsa ve aynı eventlara sahipse çalışma sıraları aşağıdaki gibi olur.
+
+`Constructor > ComponentWillMount > Render > Child Constructor > Child ComponentWillMount > Child Render > Child ComponentDidMount > ComponentDidMount`
+
+3. `ComponentWillUpdate`: Bileşen güncellenmede hemen önce çalışacaktır. Parametre olarakta "nextProps" ve "nextStates" değerlerini alır.
+
+`ComponentWillUpdate > Render`
+
+`NOT:` Props veya state değiştiği anda bileşenin baştan render edilip edilmemesi gerektiğini manuel olarak belirleyebiliyoruz. Bunun için `ShouldComponentUpdate` olayı kullanılır. Geriye bir boolean değer döndürür varsayılan olarak `true` döndürür. Bu değeri `false` yaparsak bileşen `props` ve `state` değişiminde tekrar render edilmez.
+
+4. `ComponentDidUpdate`: Bileşen güncellendikten yani render edildikten sonra çalışır.
+
+`ComponentWillUpdate > Render > ComponentDidUpdate`
+
+5. `ComponentWillUnmount`: Bileşen DOM üzerinden kaldırılmadan önce çalıştırılır.
