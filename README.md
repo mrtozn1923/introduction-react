@@ -23,10 +23,8 @@ Toplam 5 senaryo 5 branch olarak aktarılmıştır.
 Dosyaların indirilmesi
 `npm i`
 
-Babel Çıktısı Alma
-`npm run babel`
-
-İşlemleri daha komplike hale getirmemek için `gulp` veya `webpack` kullanmadım. Projeyi açmak için Visual Studio Code `Live Server` kurulabilir.
+Projeyi Çalıştırma
+`npm run start`
 
 `NOT:` Burada yapılanlar işin temelini ifade etmektedir. Yoksa `create-react-app` ile proje oluşturmak daha mantıklı bir yaklaşımdır.
 
@@ -328,3 +326,64 @@ import Header from './components/Header';
 
 Aynı mantıkta diğerleri içinde bu işlemi gerçekleştirmek gerekmektedir. Son hali zaten proje dizininde bulunmaktadır.
 
+## Function Component + Hooks (useState, useEffect)
+Aşağıda `useState` hook kullanımıyla `function component` oluşturulmuştur. 
+
+```js
+import React,{ useState } from 'react';
+
+function AddTodo({addItem}){
+    const [error,setError]=useState('');
+
+    const onFormSubmit=(e)=>{
+        e.preventDefault();
+        const item=e.target.elements.todoText.value.trim();
+        const error=addItem(item);
+        setError(error);
+        e.target.elements.todoText.value='';
+    }
+    return(
+        <div>
+            {error && <p>{error}</p>}
+            <form onSubmit={onFormSubmit}>
+                <input type="text" name="todoText" />
+                <button type="submit">Add Item</button>
+            </form>                
+        </div>
+    );
+}
+
+export default AddTodo;
+```
+
+`useEffect` lifecycle metodlarını function component içerisinde kullanmayı sağlar. Bunu da dependency array ile gerçekleştirebiliriz. Eğer array boş ise `componentDidMount()` ve `componentDidUpdate()` metodunu taklit etmiş olur. Eğer array içerisinde tanımlı state değerleri varsa sadece onlar değiştiğinde tetiklenir.
+
+```js
+useEffect(() => {
+      //componentDidMount()
+      const json=localStorage.getItem('items');
+      const items=JSON.parse(json);
+
+      if(items){          
+          setItems([...items])
+      }
+    }, [])
+
+    useEffect(() => {
+        //componentDidUpdate()      
+        const json=JSON.stringify(items);
+        localStorage.setItem('items',json);
+    }, [items])
+```
+
+`componentWillUnmount()` return içerisinde yapılacaklar bildirilir.
+
+```js
+useEffect(() => {
+      first
+      return () => {
+       //componentWillUnmount() taklit edilir
+       second
+      }
+    }, [third])
+```

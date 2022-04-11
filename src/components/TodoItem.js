@@ -1,10 +1,10 @@
 import React from 'react'
 
-const TodoItem=(props)=>{
+const TodoItem=({item,deleteItem})=>{
     return(
         <li>
-            {props.item}
-            <button onClick={()=>{props.deleteItem(props.item)  }}>x</button>
+            {item}
+            <button onClick={()=>{deleteItem(item)}}>x</button>
         </li>
     );
 }

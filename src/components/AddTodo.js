@@ -1,33 +1,24 @@
-import React from 'react'
+import React,{ useState } from 'react';
 
-class AddTodo extends React.Component{
-    constructor(props){
-        super(props);
-        this.onFormSubmit=this.onFormSubmit.bind(this);
-        this.state={
-            error:''
-        }
-    }
-    onFormSubmit(e){
+function AddTodo({addItem}){
+    const [error,setError]=useState('');
+
+    const onFormSubmit=(e)=>{
         e.preventDefault();
         const item=e.target.elements.todoText.value.trim();
-        const error=this.props.addItem(item);
-        this.setState({
-            error:error
-        })
+        const error=addItem(item);
+        setError(error);
         e.target.elements.todoText.value='';
     }
-    render(){
-        return(
-            <div>
-                {this.state.error && <p>{this.state.error}</p>}
-                <form onSubmit={this.onFormSubmit}>
-                    <input type="text" name="todoText" />
-                    <button type="submit">Add Item</button>
-                </form>                
-            </div>
-        );
-    }
+    return(
+        <div>
+            {error && <p>{error}</p>}
+            <form onSubmit={onFormSubmit}>
+                <input type="text" name="todoText" />
+                <button type="submit">Add Item</button>
+            </form>                
+        </div>
+    );
 }
 
 export default AddTodo;
