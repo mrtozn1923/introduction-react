@@ -23,10 +23,8 @@ Toplam 5 senaryo 5 branch olarak aktarılmıştır.
 Dosyaların indirilmesi
 `npm i`
 
-Babel Çıktısı Alma
-`npm run babel`
-
-İşlemleri daha komplike hale getirmemek için `gulp` veya `webpack` kullanmadım. Projeyi açmak için Visual Studio Code `Live Server` kurulabilir.
+Projeyi Çalıştırma
+`npm run start`
 
 `NOT:` Burada yapılanlar işin temelini ifade etmektedir. Yoksa `create-react-app` ile proje oluşturmak daha mantıklı bir yaklaşımdır.
 
