@@ -1,10 +1,13 @@
 # INTRODUCTION REACT
 Bu repo React JS için farklı kullanım senaryolarını içermektedir.
-Toplam 4 senaryo 4 branch olarak aktarılmıştır.
+Toplam 5 senaryo 5 branch olarak aktarılmıştır.
 1. React Hello World
 2. React Hello World JSX (Babel Entegrasyonlu)
 3. React Class Component (Todo App)
-4. React Function Component + Hooks (Todo App)
+4. React Class Component + Webpack (Todo App)
+5. React Function Component + Hooks (Todo App)
+
+`NOT:` 1,2 ve 3.kısımlarda React direkt olarak HTML sayfasına link olarak eklenmiştir. Yani herhangi bir modül kullanımı yapılmamıştır. Eğer modül (import/export) kullanımı yapmak istiyorsanız "webpack" gibi module bundler aracı kullanmanız gerekmektedir.
 
 ## React Class Component 
 * Kendi içerisinde state bilgisi tutabilir. State bilgisi tutan componentler için `stateful` component denilmektedir.
