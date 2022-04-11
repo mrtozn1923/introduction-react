@@ -101,3 +101,230 @@ Yukarıdaki adımlar sonucunda tetiklenen bazı olaylar vardır.
 `ComponentWillUpdate > Render > ComponentDidUpdate`
 
 5. `ComponentWillUnmount`: Bileşen DOM üzerinden kaldırılmadan önce çalıştırılır.
+
+# Webpack Entegrasyonu
+Daha önce `app.js` şeklinde tek dosya üzerinden işlem yapıyorduk ve `React` direkt olarak `HTML` sayfasına eklenmiş durumdaydı. Artık parçalı dosyalar oluşturarak export/import anahtar kelimeleri ile birbirine bağlayacağız.
+
+React kurulumunu HTML sayfasına eklediğimiz linkler ile değil `NPM` aracılığıyla `node_modules` üzerinden dahil edeceğiz. Zaten genel kullanımda bu şekildedir.
+
+Aşağıdaki komut ile projemize webpack paketini dahil ediyoruz. Geliştirme ortamında ihtiyacımız olduğu için `--save-dev` bayrağını kullandık.
+
+`NOT:` Eğer projeyi clone yaptıysanız aşağıdaki yükleme işlemlerini tek tek yapmanız gerekmiyor. Sadece `npm i` komutunu çalıştırmanız yeterli olacaktır.
+
+Öncelikle `webpack` paketini development dependency olarak yüklüyoruz.
+
+```npm
+npm i webpack --save-dev
+```
+
+Ayrıca webpack komutlarını içeren CLI kurulumunu da yapmamız gerekmektedir.
+
+```npm
+npm i webpack-cli --save-dev
+```
+
+Kurulum işlemini tamamladıktan sonra `webpack.config.js` dosyasını oluşturup aşağıdaki yapılandırmaları yapmamız gerekmektedir.
+
+```js
+const path=require('path');
+
+module.exports={
+    entry:'./src/index.js',
+    output:{
+        path:path.resolve(__dirname,'dist'),
+        filename:'bundle.js'
+    }
+}
+```
+
+Daha önce babel için oluşturmuş olduğumuz `NPM Script` mantığını webpack için de oluşturmalıyız.
+
+```js
+"scripts": {
+    "babel": "npx babel src/app.js --out-file=dist/app.js --watch",
+    "webpack-dev":"webpack --mode development",
+    "webpack-build":"webpack --mode production"
+  },
+```
+Çalıştırmak için `npm run webpack-dev` diyebiliriz. Çalıştırma işleminden sonra `dist` klasörü altında `bundle.js` dosyasının oluşturulmuş olması gerekmektedir.
+
+`NOT:` Yayına alırken `npm run webpack-build` komutu çalıştırılmalıdır. Çünkü bu komut sonrasında `bundle.js` sıkıştırılarak küçültülmektedir.
+
+## Webpack DevServer
+Daha önce HTML dosyasını Visual Studio eklentisi olan `Live Server` üzerinde çalıştırıyorduk. Şimdi webpack tarafından sağlanan bir sunucu üzerinde çalıştırmak için yapılandırmaları yapalım.
+
+Öncelikle aşağıdaki gibi paketi yükleyelim.
+```npm
+npm i webpack-dev-server --save-dev
+```
+
+Yükleme işleminden sonra `webpack.config.js` dosyasında tanımlamayı yapmamız gerekmektedir.
+
+```js
+const path=require('path');
+
+module.exports={
+    entry:'./src/index.js',
+    output:{
+        path:path.resolve(__dirname,'dist'),
+        filename:'bundle.js'
+    },
+    mode: 'development',
+    devServer:{
+        static:{
+            directory:path.join(__dirname,"dist")
+        },
+        compress:true,
+        port:9000
+    }
+}
+```
+Ayrıca NPM Script kısmını güncellememiz gerekmektedir. Webpack DevServer otomatik olarak development mod üzerinden çıktıyı alacaktır. NPM Scriptleri arasından `webpack-dev` scriptini silebiliriz. Projeyi çalıştırmak için artık `npm run start` dememiz yeterli olacaktır.
+```js
+"scripts": {
+    "babel": "npx babel src/app.js --out-file=dist/app.js --watch",
+    "webpack-build": "webpack --mode production",
+    "start":"webpack-dev-server --open"
+  },
+```
+
+## React Kütüphanesini Dahil Etme
+Daha önce `HTML` üzerine link şeklinde eklediğimiz dosyaları şimdi NPM aracılığıyla `module` yapısında dahil edeceğiz.
+
+HTML dosyasını ana dizinden `dist` klasörü altına taşıyarak `<script>` linklerini kaldırıyoruz. HTML sayfasına dahil ettiğimiz dosya artık `app.js` değil `bundle.js` olacaktır.
+
+`npm i react` ve `npm i react-dom` komutlarını çalıştırarak kütüphaneleri dahil ediyoruz.
+
+Henüz `babel` entegrasyonunu yapmadığımız için `index.js` içerisine aşağıdaki gibi `JSX` kullanmadan bir kod bloğu ekleyelim.
+
+```js
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+const template=React.createElement('p',{},'hello react');
+ReactDOM.render(template,document.getElementById('root'));
+```
+
+`npm run start` komutunu çalıştırdığımızda webpack dev server üzerinde react uygulamamız ayağa kalkacaktır.
+
+## Webpack ve Babel Entegrasyonu
+`JSX` ile geliştirme yapabilmek için Babel aracına ihtiyaç duyuyorduk. Ayrıca artık `module` kullanımı da yapıyoruz. Her ikisini ortak payda da buluşturmak için `Webpack` ve `Babel` entegrasyonunu sağlamalıyız.
+
+`package.json` içerisinde `npm script` güncellemesi yapsak fena olmaz. Çünkü artık `babel` için tanımladığımız script'e gerek kalmadı.
+
+```js
+"scripts": {
+    "webpack-build": "webpack --mode production",
+    "start": "webpack-dev-server --open"
+  },
+```
+
+Öncelikle `babel-loader` paketini kurmamız gerekmektedir.
+
+```npm
+npm i babel-loader --save-dev
+```
+
+Yükleme işleminden sonra `webpack.config.js` dosyasını aşağıdaki gibi güncelleyelim.
+
+```js
+const path=require('path');
+
+module.exports={
+    entry:'./src/index.js',
+    output:{
+        path:path.resolve(__dirname,'dist'),
+        filename:'bundle.js'
+    },
+    mode: 'development',
+    devServer:{
+        static:{
+            directory:path.join(__dirname,"dist")
+        },
+        compress:true,
+        port:9000
+    },
+    module:{
+        rules:[
+            {
+                test:/\.js$/,
+                loader:'babel-loader',
+                exclude:/node_modules/
+            }
+        ]
+    }
+}
+```
+
+Yapılandırma işlemi de tamamlandığına göre `index.js` dosyasında bir JSX kullanımı yapalım.
+
+```js
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+const template=<p>Hello World</p>
+ReactDOM.render(template,document.getElementById('root'));
+```
+
+`npm run start` komutu ile uygulamayı çalıştıralım.
+
+Hellow World tamamsa daha önce yapmış olduğumuz `Todo App` uygulamasını yani `app.js` dosyasını giriş dosyası olarak `webpack.config.js` dosyasında bildirelim.
+
+```js
+const path=require('path');
+
+module.exports={
+    entry:'./src/app.js',
+    output:{
+        path:path.resolve(__dirname,'dist'),
+        filename:'bundle.js'
+    },
+    ...
+```
+
+Ayrıca `app.js` dosyasına `import` işlemiyle paketleri dahil edelim.
+
+```js
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+class TodoApp extends React.Component{
+
+    constructor(props){
+        ...
+```
+
+`Ctrl+C` ve `y` enter komutlarıyla sunucuyu durdurup `npm run start` ile tekrar başlatalım.
+
+## Component Dosyalarını Oluşturma
+Tüm bileşenler tek bir dosyada bunu ayrıştırarak yönetmek daha kolay olacaktır.
+
+![components](components.jpg)
+
+Öncelikle `components` klasöründe `Header.js` dosyası oluşturun. Sonrasında kodları `Header.js` içerisine alın. Ayrıca dışarıdan bileşeni kullanabilmek için `export` ile dışarıya açmalısınız.
+
+```js
+import React from 'react'
+
+const Header=(props)=>{
+    return(
+        <div>
+            <h1>{props.title}</h1>
+            <div>{props.description}</div>
+        </div>
+    );
+}
+
+export default Header;
+```
+
+Şimdi `app.js` içerisinde dahil edin.
+
+```js
+import React from 'react';
+import ReactDOM from 'react-dom';
+import Header from './components/Header';
+```
+
+Aynı mantıkta diğerleri içinde bu işlemi gerçekleştirmek gerekmektedir. Son hali zaten proje dizininde bulunmaktadır.
+

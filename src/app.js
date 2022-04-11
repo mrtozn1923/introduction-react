@@ -1,3 +1,9 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+import AddTodo from './components/AddTodo';
+import Header from './components/Header';
+import TodoList from './components/TodoList';
+
 class TodoApp extends React.Component{
 
     constructor(props){
@@ -61,70 +67,6 @@ class TodoApp extends React.Component{
                 <Header title={app.title} description={app.description}/>
                 <AddTodo addItem={this.addItem}/>
                 <TodoList items={this.state.items} deleteItem={this.deleteItem} clearItems={this.clearItems}/>
-            </div>
-        );
-    }
-}
-const Header=(props)=>{
-    return(
-        <div>
-            <h1>{props.title}</h1>
-            <div>{props.description}</div>
-        </div>
-    );
-}
-
-const TodoList=(props)=>{
-    return(
-        <div>
-            <ul>
-                {
-                    props.items.map((item,index)=>
-                        <TodoItem deleteItem={props.deleteItem} key={index} item={item}/>
-                    )
-                }
-            </ul>
-            <p>
-                <button onClick={props.clearItems}>Clear Items</button>
-            </p>
-        </div>
-    )
-}
-
-const TodoItem=(props)=>{
-    return(
-        <li>
-            {props.item}
-            <button onClick={()=>{props.deleteItem(props.item)  }}>x</button>
-        </li>
-    );
-}
-
-class AddTodo extends React.Component{
-    constructor(props){
-        super(props);
-        this.onFormSubmit=this.onFormSubmit.bind(this);
-        this.state={
-            error:''
-        }
-    }
-    onFormSubmit(e){
-        e.preventDefault();
-        const item=e.target.elements.todoText.value.trim();
-        const error=this.props.addItem(item);
-        this.setState({
-            error:error
-        })
-        e.target.elements.todoText.value='';
-    }
-    render(){
-        return(
-            <div>
-                {this.state.error && <p>{this.state.error}</p>}
-                <form onSubmit={this.onFormSubmit}>
-                    <input type="text" name="todoText" />
-                    <button type="submit">Add Item</button>
-                </form>                
             </div>
         );
     }
