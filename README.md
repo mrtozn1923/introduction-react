@@ -9,6 +9,14 @@ Toplam 5 senaryo 5 branch olarak aktarılmıştır.
 
 `NOT:` 1,2 ve 3.kısımlarda React direkt olarak HTML sayfasına link olarak eklenmiştir. Yani herhangi bir modül kullanımı yapılmamıştır. Eğer modül (import/export) kullanımı yapmak istiyorsanız "webpack" gibi module bundler aracı kullanmanız gerekmektedir.
 
+`NOT:` Projeyi clone yaptığınızda `git switch branchName` ile branchler arasında geçiş yapabilirsiniz.
+- master
+- ReactHelloWorld
+- ReactJSX
+- ReactClassComp
+- ReactClassCompWebpack
+- ReactFunctionCompHooks
+
 ## React Class Component 
 * Kendi içerisinde state bilgisi tutabilir. State bilgisi tutan componentler için `stateful` component denilmektedir.
 
